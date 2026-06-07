@@ -38,11 +38,11 @@ async def main():
     db.init()
 
     auth = SmsAuthFlow(
-        phone=phone,
         code_provider=ConsoleSmsCodeProvider(),
     )
+    client = Client(phone=phone, auth=auth, session_dir="cache")
 
-    client = Client(auth=auth, session_dir="cache")
+
 
     @client.on_message()
     async def handle_message(msg: Message) -> None:
