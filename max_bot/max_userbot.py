@@ -4,7 +4,7 @@ import logging
 import sys
 from datetime import datetime
 
-from pymax import Client, Message, SmsAuthFlow, ConsoleSmsCodeProvider
+from pymax import Client, Message, ConsoleSmsCodeProvider
 
 from database import Database
 from config import Config
@@ -37,10 +37,12 @@ async def main():
 
     db.init()
 
-    auth = SmsAuthFlow(
-        code_provider=ConsoleSmsCodeProvider(),
+    client = Client(
+        phone=phone,
+        session_name="session.db",
+        work_dir="cache",
+        sms_code_provider=ConsoleSmsCodeProvider(),
     )
-    client = Client(phone=phone, auth=auth, session_dir="cache")
 
 
 
