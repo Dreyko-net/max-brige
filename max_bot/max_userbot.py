@@ -47,7 +47,7 @@ async def main():
 
 
     @client.on_message()
-    async def handle_message(msg: Message) -> None:
+    async def handle_message(msg: Message, client: Client) -> None
         try:
             sender_id   = str(getattr(msg.sender,   "id",       "") or "")
             sender_name = str(getattr(msg.sender,   "name",     "") or
