@@ -53,7 +53,7 @@ async def main():
     print("🚀  Бот запущен. Нажмите Ctrl+C для остановки.\n")
 
     try:
-        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+        await dp.start_polling(bot, allowed_updates=["message", "callback_query", "chat_member"])
     finally:
         await manager.stop()
         await db.close()
