@@ -215,6 +215,8 @@ async def handle_forwarded_group(msg: Message, state: FSMContext, bot: Bot):
     group = msg.forward_origin 
     if not group or group.type not in ("supergroup", "group"):
         await msg.answer("❌ Перешлите сообщение из <b>супергруппы</b>.", parse_mode="HTML")
+        log.info("[DEBUG] Данные группы=%s", group)
+        log.info("[DEBUG] Данные типа группы=%s", group.type)
         return
 
     group_id = group.id
