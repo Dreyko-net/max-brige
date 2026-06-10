@@ -9,8 +9,7 @@ import asyncio
 import logging
 
 from aiogram import Router, F, Bot
-from aiogram.filters import CommandStart,ChatMemberFilter
-from aiogram.types import ChatMemberUpdated
+from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import (
@@ -323,46 +322,3 @@ async def _reconnect(tg_user_id, phone, bot, chat_id, state):
             f"❌ Ошибка переподключения: <code>{e}</code>",
             parse_mode="HTML",
         )
-
-# # Добавляем новый хендлер для добавления бота
-# @router.my_chat_member(
-#     ChatMemberFilter(
-#         member_status_changed=True,  # Статус бота изменился
-#         chat_type=["group", "supergroup"]  # Только группы
-#     )
-# )
-# async def handle_bot_added_to_group(
-#     update: ChatMemberUpdated,  # Важно: тип ChatMemberUpdated
-#     state: FSMContext,
-#     bot: Bot
-# ):
-#     """Срабатывает, когда бота добавляют в группу или супергруппу"""
-    
-#     # Проверяем, что бота именно добавили (статус стал member или administrator)
-#     if update.new_chat_member.status not in ["member", "administrator"]:
-#         return  # Не добавление, а что-то другое (кикнули, повысили и т.д.)
-    
-#     # ID группы и пользователя, который добавил бота
-#     group_id = update.chat.id
-#     user_id = update.from_user.id
-    
-#     log.info(f"Бота добавили в группу {group_id} пользователем {user_id}")
-    
-#     # --- Дальше идёт ваша логика из handle_forwarded_group ---
-#     # (почти без изменений, но user_id берётся из update.from_user.id)
-    
-#     # 1. Получаем данные пользователя из БД по user_id
-#     user_data = db.get_user_by_tg_id(user_id)
-#     if not user_data:
-#         await bot.send_message(user_id, "❌ Сначала авторизуйтесь в /start")
-#         return
-    
-#     # 2. Обновляем group_id для этого пользователя
-#     db.update_user_group(user_id, group_id)
-    
-#     # 3. Создаём темы для чатов MAX (ваша существующая логика)
-#     # ...
-#     # 4. Запускаем синхронизацию
-#     # ...
-    
-#     await bot.send_message(group_id, "✅ Бот активирован! Создаю темы...")

@@ -12,8 +12,8 @@ class LogAllUpdatesMiddleware(BaseMiddleware):
     async def __call__(self, handler, event: TelegramObject, data: dict):
         log.info("[MIDDLEWARE] update type=%s data_keys=%s",
                  type(event).__name__, list(data.keys()))
-        # for key, value in data.items():
-        #     log.info(f"[DEBUG]  {key}: {value}")
+        for key, value in data.items():
+            log.info(f"[DEBUG]  {key}: {value}")
         result = await handler(event, data)
         return result
 
