@@ -65,7 +65,7 @@ class MaxUserClient:
         try:
             await asyncio.wait_for(
                 self._client._app.start(),
-                timeout=310,  # чуть больше таймаута SMS-провайдера (300 сек)
+                timeout=60,  # чуть больше таймаута SMS-провайдера (300 сек)
             )
         except asyncio.TimeoutError:
             log.error("[user=%s] _app.start() timeout", self.tg_user_id)
