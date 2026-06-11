@@ -380,3 +380,54 @@ async def _reconnect(tg_user_id, phone, bot, chat_id, state):
             f"❌ Ошибка переподключения: <code>{e}</code>",
             parse_mode="HTML",
         )
+
+
+# ── Ручной запуск синхронизации ───────────────────────────────────────────────
+
+from aiogram.filters import Command
+
+@router.message(Command("sync"))
+async def cmd_sync(msg: Message, bot: Bot):
+    """Принудительно запускает синхронизацию чатов MAX."""
+    tg_user_id = msg.from_user.id
+    user = await db.get_user(tg_user_id)
+    if not user or user.status != "active":
+        await msg.answer("❌ Сначала авторизуйтесь: /start")
+        return
+    if not user.tg_group_id:
+        await msg.answer("❌ Группа не подключена. Пройдите /start")
+        return
+    client = manager.get_client(tg_user_id)
+    if not client:
+        await msg.answer("❌ Клиент MAX не найден. Перезапустите: /start")
+        return
+
+    await msg.answer("🔄 Запускаю синхронизацию…")
+    sync = SyncWorker(bot=bot, manager=manager)
+    asyncio.create_task(sync.full_sync(user=user, client=client))
+
+
+@router.message(Command("debug_chats"))
+async def cmd_debug_chats(msg: Message):
+    """Отладка: показывает что возвращает fetch_chats."""
+    tg_user_id = msg.from_user.id
+    client = manager.get_client(tg_user_id)
+    if not client:
+        await msg.answer("❌ Клиент не найден")
+        return
+
+    await msg.answer("🔍 Запрашиваю чаты из MAX…")
+    try:
+        raw = await client._client.fetch_chats()
+        if not raw:
+            await msg.answer("⚠️ fetch_chats() вернул пустой список")
+            return
+        lines = [f"Всего чатов: {len(raw)}"]
+        for c in raw[:5]:
+            cid    = getattr(c, "id",    None) or getattr(c, "chat_id", "?")
+            ctitle = getattr(c, "title", None) or getattr(c, "name",    "?")
+            ctype  = type(c).__name__
+            lines.append(f"• [{ctype}] id={cid} title={ctitle}")
+        await msg.answer("\n".join(lines))
+    except Exception as e:
+        await msg.answer(f"❌ Ошибка: <code>{e}</code>", parse_mode="HTML")
