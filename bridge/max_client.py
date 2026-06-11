@@ -178,6 +178,7 @@ class MaxUserClient:
                 from_time = to_ts,   # точка отсчёта — конец периода
                 backward  = limit,   # сколько сообщений назад
             )
+            log.info("[DEBUG user=%s] get_history chat=%s: result_messangers: %d", self.tg_user_id, max_chat_id, result)
             if not result:
                 return []
             # Фильтруем по нижней границе from_ts
